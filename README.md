@@ -21,10 +21,10 @@ Model çıktıları otomatik güvenlik sertifikası değildir; final kod ve bulg
 
 ## Kurulum
 
-Python 3.12+ gerekir. Örneklerin uygulamaya da gelmesi için depoyu submodule ile klonlayın:
+Python 3.12+ gerekir. Örnek senaryolar ana depoda bulunduğu için normal klonlama yeterlidir:
 
 ```powershell
-git clone --recurse-submodules https://github.com/osmanmemisdev/devarena.git
+git clone https://github.com/osmanmemisdev/DevArena.git
 cd devarena
 py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
@@ -44,6 +44,6 @@ Arayüz: `http://127.0.0.1:8000`
 
 - `static/`: tarayıcı arayüzü
 - `main.py`, `pipeline.py`, `schemas.py`, `presets.py`: API ve orkestrasyon
-- `examples/`: ayrı `DevArena-examples` deposuna bağlı submodule
+- `examples/`: hızlı analiz senaryoları; ana depoyla birlikte klonlanır
 
 Örnekler kasıtlı olarak zafiyetli eğitim girdileridir. Gerçek sistemlerde çalıştırmayın.
