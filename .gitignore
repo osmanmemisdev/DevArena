@@ -1,0 +1,21 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+tmp/
+output/
+dist/
+build/
+*.log
+*.sqlite3
+*.db
+coverage.xml
+htmlcov/
+.coverage*
+GitHub Desktop.lnk

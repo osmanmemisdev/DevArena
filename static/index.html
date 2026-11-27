@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080a0f"><meta name="description" content="Çoklu ajan kod üretim, güvenlik denetimi ve iyileştirme kokpiti."><title>DevArena — Çoklu Model Kod Kokpiti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <script>window.tailwind=window.tailwind||{};window.tailwind.config={darkMode:'class',theme:{extend:{colors:{ink:'#080a0f',panel:'#10131b',line:'#222735',muted:'#7d8496',mint:'#a3ffcb',violet:'#a998ff'}}}};</script>
+  <script async src="https://cdn.tailwindcss.com"></script>
+  <script>try{const saved=localStorage.getItem("devarena-theme");if(["dark","light","pink"].includes(saved))document.documentElement.dataset.theme=saved}catch{}</script><link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-ink text-slate-100 antialiased">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark"><i data-lucide="command"></i></div><div><b>DevArena</b><small>AGENT WORKSPACE</small></div><button class="icon-button sidebar-toggle" aria-label="Menüyü daralt"><i data-lucide="panel-left-close"></i></button></div>
+      <div class="workspace-label">WORKSPACE <span>⌘ K</span></div>
+      <button class="nav-item active"><i data-lucide="layout-dashboard"></i><span>Analiz Kokpiti</span></button>
+      <button class="nav-item" id="newAnalysis"><i data-lucide="plus"></i><span>Yeni analiz</span><kbd>⌘ N</kbd></button>
+      <div class="side-section"><div class="section-heading">SON OTURUMLAR <span id="historyCount">0</span></div><div id="historyList" class="history-list"><div class="empty-history">Henüz analiz yok</div></div></div>
+      <div class="sidebar-bottom">
+        <div class="metric-card"><div class="metric-label"><i data-lucide="shield-check"></i> YAKALANAN AÇIK</div><strong id="vulnCount">0</strong><div class="metric-foot">Toplam bulgu</div></div>
+        <div class="metric-card"><div class="metric-label"><i data-lucide="trending-up"></i> SKOR İYİLEŞMESİ</div><strong id="scoreGain">—</strong><div class="metric-foot">Ortalama puan artışı</div></div>
+        <div class="status-row"><span id="statusDot" class="status-dot"></span><span id="modeLabel">Bağlantı denetleniyor</span><button class="icon-button" id="settingsBtn" title="Durum bilgisi"><i data-lucide="settings-2"></i></button></div>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><div class="breadcrumbs"><span>Workspace</span><i data-lucide="chevron-right"></i><b>Analiz Kokpiti</b></div><div class="top-actions"><label class="locale-picker"><span>Dil</span><select id="localeSelector" aria-label="Arayüz dili"><option value="tr">Türkçe</option><option value="en">English</option></select></label><label class="theme-picker"><span>Görünüm</span><select id="themeSelector" aria-label="Renk temasını seç"><option value="dark">Gece</option><option value="light">Beyaz</option><option value="pink">Pembe</option></select></label><div class="api-pill"><span class="status-dot" id="topStatusDot"></span><span id="topMode">API BAĞLI DEĞİL</span></div><button class="avatar" aria-label="Kullanıcı menüsü">OA</button></div></header>
+      <div class="content-wrap">
+        <section class="hero"><div class="eyebrow"><span class="eyebrow-line"></span> MULTI-AGENT ENGINEERING</div><h1>Kodu üret. Denetle.<br><em>Güvenle iyileştir.</em></h1><p>Uzman modelleri tek bir akışta birleştir. İlk taslaktan güvenlik denetimine, test edilmiş final koda.</p></section>
+        <section class="request-card">
+          <div class="mode-tabs" role="tablist" aria-label="Analiz modu"><button class="mode-tab active" id="modeGenerate" type="button" role="tab" aria-selected="true" aria-controls="prompt">Sıfırdan Kod Üret</button><button class="mode-tab" id="modeAudit" type="button" role="tab" aria-selected="false" aria-controls="prompt">Mevcut Kodumu Denetle</button></div>
+          <div class="github-import" id="githubImporter" hidden>
+            <div class="github-import-heading"><div><div class="label-overline">İSTEĞE BAĞLI KAYNAK</div><b>Herkese açık GitHub deposundan Python dosyası seç</b></div><span class="github-mark">GH</span></div>
+            <div class="github-controls"><input id="githubRepo" type="url" inputmode="url" placeholder="https://github.com/kullanici/depo" aria-label="Herkese açık GitHub depo bağlantısı"><button class="small-button" id="loadGithubFiles" type="button">Dosyaları Listele</button></div>
+            <div class="github-controls github-file-controls"><select id="githubFile" aria-label="İncelenecek Python dosyası" disabled><option value="">Önce bir depo yükleyin</option></select><span id="githubStatus" role="status" aria-live="polite">Dosyayı seçince kod aşağıdaki kutuya yüklenir.</span></div>
+            <p class="github-privacy">Yalnızca herkese açık depolar desteklenir. Seçtiğiniz dosya analiz sırasında NVIDIA NIM'e gönderilir. İlk sürümde sadece Python dosyaları listelenir.</p>
+          </div>
+          <div class="request-head"><div><div class="label-overline" id="promptOverline">GÖREV TANIMI</div><div class="request-title" id="promptTitle">Neyi inşa ediyoruz?</div></div><div class="request-selectors"><label class="select-wrap"><i data-lucide="code-2"></i><select id="language" aria-label="Programlama dili"><option>Python</option><option>TypeScript</option><option>Go</option><option>SQL</option></select><i data-lucide="chevron-down"></i></label><label class="select-wrap review-depth-wrap"><i data-lucide="gauge"></i><select id="reviewDepth" aria-label="İnceleme hızı"><option value="fast">Hızlı inceleme</option><option value="deep">Derin inceleme</option></select><i data-lucide="chevron-down"></i></label></div></div>
+          <div class="review-depth-note" id="reviewDepthNote">Hızlı inceleme daha kısa yanıt verir. Derin inceleme daha güçlü modeli kullanır ve daha uzun sürebilir.</div>
+          <textarea id="prompt" maxlength="12000" placeholder="Görevi ve önemli gereksinimleri tanımla… Örn: rate limiting destekli, güvenli bir FastAPI endpoint'i oluştur."></textarea>
+          <div class="preset-row"><span>HIZLI SENARYOLAR</span><div id="presetChips" class="chips"></div></div>
+          <div class="request-footer"><span><i data-lucide="sparkles"></i> Kodunuz seçtiğiniz inceleme düzeyinde değerlendirilecek</span><button class="run-button" id="runButton"><span>Analizi başlat</span><i data-lucide="arrow-up-right"></i></button></div>
+        </section>
+        <section class="pipeline-section"><div class="section-top"><div><div class="label-overline">CANLI İŞ AKIŞI</div><h2>Analiz adımları</h2></div><div class="run-meta" id="runMeta">Hazır olduğunuzda başlayabiliriz</div></div>
+          <div class="pipeline" id="pipeline">
+            <div class="pipe-node" data-stage="routing"><div class="node-icon violet"><i data-lucide="route"></i><span class="pulse"></span></div><div class="node-copy"><b>Router</b><small>Model bekleniyor</small></div><div class="node-meta">—</div></div><div class="pipe-connector"></div>
+            <div class="pipe-node" data-stage="generating"><div class="node-icon blue"><i data-lucide="code-xml"></i><span class="pulse"></span></div><div class="node-copy"><b>Coder</b><small>Model bekleniyor</small></div><div class="node-meta">—</div></div><div class="pipe-connector"></div>
+            <div class="pipe-node" data-stage="critiquing"><div class="node-icon amber"><i data-lucide="scan-search"></i><span class="pulse"></span></div><div class="node-copy"><b>Critic</b><small>Model bekleniyor</small></div><div class="node-meta">—</div></div><div class="pipe-connector"></div>
+            <div class="pipe-node" data-stage="refining"><div class="node-icon green"><i data-lucide="test-tubes"></i><span class="pulse"></span></div><div class="node-copy"><b>Refiner</b><small>Model bekleniyor</small></div><div class="node-meta">—</div></div>
+          </div>
+        </section>
+        <section class="results-section" id="resultsSection"><div class="section-top result-top"><div><div class="label-overline">ANALİZ SONUCU</div><h2>İnceleme sonuçları</h2></div><div class="score-compare"><div><small>İLK TASLAK</small><b id="initialScore">—</b></div><i data-lucide="arrow-right"></i><div class="final-score"><small>FINAL KOD</small><b id="finalScore">—</b></div></div></div>
+          <div class="analysis-error" id="analysisError" role="alert" hidden></div>
+          <div class="tabs"><button class="tab active" data-tab="audit"><i data-lucide="shield-alert"></i> Güvenlik bulguları <span id="findingTabCount">0</span></button><button class="tab" data-tab="code"><i data-lucide="columns-2"></i> Kod karşılaştırması</button><button class="tab" data-tab="tests"><i data-lucide="flask-conical"></i> Testler</button></div>
+          <div class="tab-panel active" id="panel-audit"><div class="audit-summary" id="auditSummary">Analiz tamamlandığında bulgular burada listelenir.</div><div class="findings-list" id="findingsList"></div></div>
+          <div class="tab-panel" id="panel-code"><div class="code-actions"><span><span id="draftTitle">ÜRETİLEN TASLAK</span> <span class="arrow-label">→</span> GÜVENLİ FINAL</span><div><button class="small-button" id="copyFinal"><i data-lucide="copy"></i> Kodu kopyala</button><button class="small-button" id="downloadFinal"><i data-lucide="download"></i> İndir</button></div></div><div class="code-grid"><div class="code-card"><div class="code-head"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><label>draft.<span id="draftExt">py</span></label></div><pre><code id="draftCode" class="language-python"># İlk taslak burada görüntülenecek</code></pre></div><div class="code-card final-card"><div class="code-head"><span class="code-dot green"></span><span class="code-file"><i data-lucide="shield-check"></i> final.<span id="finalExt">py</span></span><span class="safe-label">HARDENED</span></div><pre><code id="finalCode" class="language-python"># Denetlenmiş final kod burada görüntülenecek</code></pre></div></div></div>
+          <div class="tab-panel" id="panel-tests"><div class="code-actions"><span>ÜRETİLEN TEST SUİTİ</span><div><button class="small-button" id="copyTests"><i data-lucide="copy"></i> Testleri kopyala</button><button class="run-tests-button" id="runTestsButton" type="button"><i data-lucide="play"></i> Testleri Canlı Çalıştır</button></div></div><label class="test-dependencies-label" for="testProjectKey">Proje etiketi (ortamları ayırır)</label><input id="testProjectKey" class="test-project-key" type="text" maxlength="300" placeholder="Örnek: el-takip-uygulamam"><label class="test-dependencies-label" for="testProfile">Hazır Python paket grubu</label><select id="testProfile" class="test-profile"><option value="auto">Otomatik seç</option><option value="basic">Temel — NumPy, Requests, Pillow, HTTPX</option><option value="vision">Görüntü — MediaPipe Hands uyumlu</option><option value="desktop">Masaüstü — PyAutoGUI, Pycaw, comtypes</option><option value="data">Veri bilimi — Pandas, SciPy, Matplotlib</option><option value="web">API — FastAPI, Pydantic, HTTPX</option><option value="custom">Yalnız requirements.txt</option></select><label class="test-dependencies-label" for="testRequirements">Bu proje için requirements.txt (isteğe bağlı)</label><textarea id="testRequirements" class="test-dependencies" placeholder="Boş bırak: import'lardan tahmin edilsin&#10;Örnek:&#10;opencv-python-headless&#10;mediapipe"></textarea><p class="test-dependencies-help">Her proje etiketi ve bağımlılık listesi için ayrı Python ortamı hazırlanır. İlk kurulum biraz sürebilir; aynı proje ortamı sonraki testlerde yeniden kullanılır. Ağır paketlerde testler 90 saniyeye kadar sürebilir.</p><div class="code-card tests-card"><div class="code-head"><span class="code-dot green"></span><label>test_solution.<span id="testExt">py</span></label><span class="test-ready"><i data-lucide="check-circle-2"></i> PYTEST</span></div><pre><code id="testsCode" class="language-python"># Otomatik testler burada görüntülenecek</code></pre></div><div class="terminal-card"><div class="terminal-head"><span class="terminal-lights"><i></i><i></i><i></i></span><b>TEST RUNNER</b><span id="testRunStatus">Hazır</span></div><pre id="testOutput" aria-live="polite">Testleri çalıştırınca terminal çıktısı burada görünür.</pre></div></div>
+        </section>
+        <footer><span>DevArena <span class="footer-sep">/</span> Multi-agent security cockpit</span><span>Powered by NVIDIA NIM</span></footer>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="/static/app.js"></script>
+</body></html>
