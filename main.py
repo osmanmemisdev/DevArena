@@ -2,6 +2,7 @@ import asyncio
 import ast
 import base64
 import hashlib
+import ipaddress
 import json
 import os
 import re
@@ -19,7 +20,7 @@ from urllib.parse import quote, urlsplit
 import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from pipeline import CODER_MODEL, CRITIC_MODEL, FAST_REFINER_MODEL, REFINER_MODEL, ROUTER_MODEL, stream_analysis
@@ -69,6 +70,36 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="DevArena", description="Multi-agent code generation, security review, and refinement cockpit", version="1.0.0", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
+
+
+@app.middleware("http")
+async def restrict_api_to_local_clients(request, call_next):
+    """Keep unauthenticated API endpoints and the code runner off public networks."""
+    if request.url.path == "/api" or request.url.path.startswith("/api/"):
+        client_host = request.client.host if request.client else ""
+        try:
+            local_client = ipaddress.ip_address(client_host).is_loopback
+        except ValueError:
+            local_client = False
+
+        origin = request.headers.get("origin")
+        local_origin = True
+        if origin:
+            parsed_origin = urlsplit(origin)
+            origin_host = parsed_origin.hostname or ""
+            try:
+                local_origin = parsed_origin.scheme in {"http", "https"} and (
+                    origin_host.lower() == "localhost" or ipaddress.ip_address(origin_host).is_loopback
+                )
+            except ValueError:
+                local_origin = False
+
+        if not local_client or not local_origin:
+            return JSONResponse(
+                status_code=403,
+                content={"detail": "DevArena API yalnızca bu bilgisayardan kullanılabilir."},
+            )
+    return await call_next(request)
 
 
 @app.get("/", include_in_schema=False)
